@@ -1,0 +1,10 @@
+parameters:
+    data_collector.version_information.class: Lsw\VersionInformationBundle\DataCollector\VersionInformationDataCollector
+    data_collector.version_information.template: "LswVersionInformationBundle:Collector:version_information"
+
+services:
+    data_collector.version_information:
+        class: %data_collector.version_information.class%
+        arguments: [@kernel]
+        tags:
+            - { name: data_collector, template: %data_collector.version_information.template%, id:"version_information"}
