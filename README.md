@@ -13,3 +13,31 @@ This bundle is actually a rewrite of the Symfony1 "lwTestingInformationPlugin" w
 ago that can be found on the link below.
 
 http://www.leaseweblabs.com/2011/12/subversion-revision-information-in-the-symfony-debug-toolbar/
+
+### Installation
+
+To install LswVersionInformationBundle with Composer just add the following to your composer.json file:
+
+    {
+        require: {
+            "leaseweb/version-information-bundle": "dev-master"
+            ...
+        }
+    }
+
+The next thing you should do is install the bundle by executing the following command:
+
+    php composer.phar install leaseweb/version-information-bundle
+
+Finally, add the bundle to the registerBundles function of the AppKernel class in app/AppKernel.php:
+
+    public function registerBundles()
+    {
+        $bundles = array(
+            // ...
+            new Lsw\VersionInformationBundle\LswVersionInformationBundle(),
+            // ...
+        );
+
+
+Now the Subversion information should show up with a little 'svn' icon  in your debug toolbar.
