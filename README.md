@@ -1,8 +1,8 @@
 LswVersionInformationBundle
 ===========================
 
-How do the testers know what revision of our application they are testing and what branch
-they are testing? This is especially a problem with acceptance testing where interactions
+How do the testers know what revision of our application they are testing and what branch or 
+tag they are testing? This is especially a problem with acceptance testing where interactions
 between various systems are tested. Because the testers do not have command line access on
 the Linux machines that run the acceptance environment they cannot simply issue the "svn info"
 and "svn status" commands like developers can.
@@ -16,7 +16,7 @@ http://www.leaseweblabs.com/2011/12/subversion-revision-information-in-the-symfo
 
 ### Installation
 
-To install LswVersionInformationBundle with Composer just add the following to your composer.json file:
+To install LswVersionInformationBundle with Composer just add the following to your 'composer.json' file:
 
     {
         require: {
@@ -29,7 +29,7 @@ The next thing you should do is install the bundle by executing the following co
 
     php composer.phar install leaseweb/version-information-bundle
 
-Finally, add the bundle to the registerBundles function of the AppKernel class in app/AppKernel.php:
+Finally, add the bundle to the registerBundles function of the AppKernel class in the 'app/AppKernel.php' file:
 
     public function registerBundles()
     {
@@ -40,4 +40,4 @@ Finally, add the bundle to the registerBundles function of the AppKernel class i
         );
 
 
-Now the Subversion information should show up with a little 'svn' icon  in your debug toolbar.
+Now the Subversion information should show up with a little 'svn' icon in your debug toolbar.
