@@ -27,7 +27,7 @@ To install LswVersionInformationBundle with Composer just add the following to y
 
 The next thing you should do is install the bundle by executing the following command:
 
-    php composer.phar install leaseweb/version-information-bundle
+    php composer.phar update leaseweb/version-information-bundle
 
 Finally, add the bundle to the registerBundles function of the AppKernel class in the 'app/AppKernel.php' file:
 
