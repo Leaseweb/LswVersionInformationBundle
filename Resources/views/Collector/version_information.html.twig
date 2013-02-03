@@ -2,8 +2,11 @@
 
 {% block toolbar %}
     {% set icon %}
-        <img width="20" height="28" alt="svn" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB90BBxUdJ4JIDLQAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABAUlEQVRIx+2ToY6DQBRFz24a0g/A8i1tDaKgUJOmIfixKDxNKvoFSMSoSUbUNhmNBz5gVFPTpA7DqsV0JWZ3OeqKd0+eubDw9/nYbDbjnMLPuT9chDMKj8cjxhistVhrCYIArTWe5wHgeR5aa4IgwFpLmqZcr1e01ux2u3fh4XCgqirCMGS73eKco+97oigCII5juq7DOQfA6/UiSRLO5zNSynfh5XJhv9+jtSbLMgCUUgghWK/XCCFQSk1FYwzDMNA0Db7vvwtvtxtSSvI8RwgBQNu2PB4PTqcT9/udruum4jj+vIfVd7DWAvB8PqnrejpQSlGWJUVRLNP7rcKF/8AXC1ZjwNsw7R0AAAAASUVORK5CYII=" />
-        <!-- <img width="20" height="28" alt="Git" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB90BBxUfMDOt6/EAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAA3ElEQVRIx+2TLQ6EMBSEB7IYJKIhIQhOQlV9D8AhsNiGg7wEiUBgQHEQBCFBcATUroJA+NllgyKMe2nmy0xfCzy6vzTf999XAvWrE94MWFXVOaCmaZBSgohQFAWICEKI6Zxz/hX+mg9SSgghEMcxmqYBYwxBEKAsy/+eDRFBKYW6rncrc85X6ebJFwlt20bbtqtKc8M4j/DDO+z7Ho7jTKYtw6ml5HmOMAzheR4Mw4DrurvGYRhgWdbxUtI0ha7rUEqBMYau6xBF0SYwyzIkSQLTNBdNnr/86NEv+gC9ykorte4x7QAAAABJRU5ErkJggg==" /> -->
+        {% if collector.mode == 'svn' %}
+          <img width="20" height="28" alt="svn" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB90BBxUdJ4JIDLQAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABAUlEQVRIx+2ToY6DQBRFz24a0g/A8i1tDaKgUJOmIfixKDxNKvoFSMSoSUbUNhmNBz5gVFPTpA7DqsV0JWZ3OeqKd0+eubDw9/nYbDbjnMLPuT9chDMKj8cjxhistVhrCYIArTWe5wHgeR5aa4IgwFpLmqZcr1e01ux2u3fh4XCgqirCMGS73eKco+97oigCII5juq7DOQfA6/UiSRLO5zNSynfh5XJhv9+jtSbLMgCUUgghWK/XCCFQSk1FYwzDMNA0Db7vvwtvtxtSSvI8RwgBQNu2PB4PTqcT9/udruum4jj+vIfVd7DWAvB8PqnrejpQSlGWJUVRLNP7rcKF/8AXC1ZjwNsw7R0AAAAASUVORK5CYII=" />
+        {% else %}
+          <img width="20" height="28" alt="Git" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB90BBxUfMDOt6/EAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAA3ElEQVRIx+2TLQ6EMBSEB7IYJKIhIQhOQlV9D8AhsNiGg7wEiUBgQHEQBCFBcATUroJA+NllgyKMe2nmy0xfCzy6vzTf999XAvWrE94MWFXVOaCmaZBSgohQFAWICEKI6Zxz/hX+mg9SSgghEMcxmqYBYwxBEKAsy/+eDRFBKYW6rncrc85X6ebJFwlt20bbtqtKc8M4j/DDO+z7Ho7jTKYtw6ml5HmOMAzheR4Mw4DrurvGYRhgWdbxUtI0ha7rUEqBMYau6xBF0SYwyzIkSQLTNBdNnr/86NEv+gC9ykorte4x7QAAAABJRU5ErkJggg==" />
+        {% endif %}
         <span class="sf-toolbar-info-piece-additional">{{ collector.revision }}</span>
         <span class="sf-toolbar-status sf-toolbar-status-{{ collector.dirtyCount > 0 ? (collector.dirtyCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.dirtyCount }}</span>
     {% endset %}
@@ -31,7 +34,13 @@
 {% block menu %}
 <span class="label">
     <span class="icon">
-      <span style="display:block; float: left; text-transform: none; background-color: #3F3F3F; color: #F7F7F7; font-family: sans-serif; font-size: 15px; padding: 4px 4px 3px 4px; margin: 3px 15px;">svn</span>
+      <span style="display:block; float: left; text-transform: none; background-color: #3F3F3F; color: #F7F7F7; font-family: sans-serif; font-size: 15px; padding: 4px 4px 3px 4px; margin: 3px 15px;">
+      {% if collector.mode == 'svn' %}
+        svn
+      {% else %}
+        Git
+      {% endif %}
+      </span>
     </span>
     <strong>VERSION</strong>
 </span>
@@ -40,11 +49,11 @@
 {% block panel %}
     <h2>Version Information</h2>
 
-    <h3>SVN info</h3>
+    <h3>Last commit</h3>
     <pre>{{ collector.informationText }}</pre>
 
     <br/>
-    <h3>SVN status</h3>
+    <h3>Current status</h3>
     <pre>{{ collector.statusText }}</pre>
     {% if not collector.statusText|trim %}<p><em>No dirty files found</em></p>{% endif %}
 

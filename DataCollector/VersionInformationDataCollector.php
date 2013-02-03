@@ -17,6 +17,9 @@ class VersionInformationDataCollector extends DataCollector
 
     private $kernel;
 
+    const SVN = 'svn';
+    const GIT = 'git';
+
     /**
      * Class constructor
      *
@@ -40,6 +43,55 @@ class VersionInformationDataCollector extends DataCollector
         $dumper = new \Symfony\Component\Yaml\Dumper();
         $rootDir = realpath($this->kernel->getRootDir().'/../');
 
+        if (file_exists($rootDir.'/.svn/')) {
+            $this->data->mode = self::SVN;
+            $this->collectSvn($rootDir, $request, $response, $exception);
+        } elseif (file_exists($rootDir.'/.git/')) {
+            $this->data->mode = self::GIT;
+            $this->collectGit($rootDir, $request, $response, $exception);
+        } else {
+            throw new \Exception('Could not find Subversion or Git.');
+        }
+
+    }
+
+    private function collectGit($rootDir, Request $request, Response $response, \Exception $exception = null)
+    {
+        $process = new Process('git --no-pager log -1 --pretty=\'{"hash":"%h","date":"%ai","name":"%an"}\' '.$rootDir);
+        $process->run();
+        $output = $process->getOutput();
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+        $this->data->information = json_decode($output);
+
+        $process = new Process('git log -1 '.$rootDir);
+        $process->run();
+        $output = $process->getOutput();
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+        $this->data->informationText = $output;
+
+        $process = new Process('git status --porcelain '.$rootDir);
+        $process->run();
+        $output = $process->getOutput();
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+        $this->data->status = explode("\n", trim($output));
+
+        $process = new Process('git status '.$rootDir);
+        $process->run();
+        $output = $process->getOutput();
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+        $this->data->statusText = $output;
+    }
+
+    private function collectSvn($rootDir, Request $request, Response $response, \Exception $exception = null)
+    {
         $process = new Process('svn info --xml '.$rootDir);
         $process->run();
         $output = $process->getOutput();
@@ -71,7 +123,16 @@ class VersionInformationDataCollector extends DataCollector
             throw new \Exception($process->getErrorOutput());
         }
         $this->data->statusText = $output;
+    }
 
+    /**
+     * Get the string 'svn' or 'git', depending on the mode
+     *
+     * @return string
+     */
+    public function getMode()
+    {
+        return $this->data->mode;
     }
 
     /**
@@ -81,7 +142,11 @@ class VersionInformationDataCollector extends DataCollector
      */
     public function getRevision()
     {
-        return $this->data->information->entry->commit->{'@attributes'}->revision;
+        if ($this->data->mode == self::SVN) {
+            return $this->data->information->entry->commit->{'@attributes'}->revision;
+        } elseif ($this->data->mode == self::GIT) {
+            return $this->data->information->hash;
+        }
     }
 
     /**
@@ -91,7 +156,11 @@ class VersionInformationDataCollector extends DataCollector
      */
     public function getAuthor()
     {
-        return $this->data->information->entry->commit->author;
+        if ($this->data->mode == self::SVN) {
+            return $this->data->information->entry->commit->author;
+        } elseif ($this->data->mode == self::GIT) {
+            return $this->data->information->name;
+        }
     }
 
     /**
@@ -101,7 +170,11 @@ class VersionInformationDataCollector extends DataCollector
      */
     public function getDate()
     {
-        return strtotime($this->data->information->entry->commit->date);
+        if ($this->data->mode == self::SVN) {
+            return strtotime($this->data->information->entry->commit->date);
+        } elseif ($this->data->mode == self::GIT) {
+            return $this->data->information->date;
+        }
     }
 
     /**
@@ -111,11 +184,16 @@ class VersionInformationDataCollector extends DataCollector
      */
     public function getDirtyCount()
     {
-        if (!isset($this->data->status->target->entry)) {
-            return 0;
+        if ($this->data->mode == self::SVN) {
+            if (!isset($this->data->status->target->entry)) {
+                return 0;
+            }
+
+            return count($this->data->status->target->entry);
+        } elseif ($this->data->mode == self::GIT) {
+            return count($this->data->status);
         }
 
-        return count($this->data->status->target->entry);
     }
 
     /**
