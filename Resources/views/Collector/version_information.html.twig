@@ -9,6 +9,10 @@
         {% endif %}
         <span class="sf-toolbar-info-piece-additional">{{ collector.revision }}</span>
         <span class="sf-toolbar-status sf-toolbar-status-{{ collector.dirtyCount > 0 ? (collector.dirtyCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.dirtyCount }}</span>
+        {% if collector.mode == 'git' %}
+            <span class="sf-toolbar-status sf-toolbar-status-{{ collector.aheadCount > 0 ? (collector.aheadCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.aheadCount }}</span>
+            <span class="sf-toolbar-status sf-toolbar-status-{{ collector.behindCount > 0 ? (collector.behindCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.behindCount }}</span>
+        {% endif %}
     {% endset %}
     {% set text %}
         <div class="sf-toolbar-info-piece">
@@ -26,6 +30,10 @@
         <div class="sf-toolbar-info-piece">
             <b>Dirty files</b>
             <span class="sf-toolbar-status sf-toolbar-status-{{ collector.dirtyCount > 0 ? (collector.dirtyCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.dirtyCount }}</span>
+            {% if collector.mode == 'git' %}
+                <span class="sf-toolbar-status sf-toolbar-status-{{ collector.aheadCount > 0 ? (collector.aheadCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.aheadCount }}</span>
+                <span class="sf-toolbar-status sf-toolbar-status-{{ collector.behindCount > 0 ? (collector.behindCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.behindCount }}</span>
+            {% endif %}
         </div>
     {% endset %}
     {% include 'WebProfilerBundle:Profiler:toolbar_item.html.twig' with { 'link': profiler_url } %}
@@ -53,8 +61,21 @@
     <pre>{{ collector.informationText }}</pre>
 
     <br/>
-    <h3>Current status</h3>
-    <pre>{{ collector.statusText }}</pre>
-    {% if not collector.statusText|trim %}<p><em>No dirty files found</em></p>{% endif %}
+    <h3>Dirty files</h3>
+    {% if collector.statusText|trim %}
+        <pre>{{ collector.statusText }}</pre><br/>
+    {% else %}
+        <p><em>No dirty files found</em></p>
+    {% endif %}
 
+    {% if collector.mode == 'git' %}
+        {% if collector.aheadText|trim %}
+            <h3>Commits ahead</h3>
+            <pre>{{ collector.aheadText }}</pre><br/>
+        {% endif %}
+        {% if collector.behindText|trim %}
+            <h3>Commits behind</h3>
+            <pre>{{ collector.behindText }}</pre><br/>
+        {% endif %}
+    {% endif %}
 {% endblock %}

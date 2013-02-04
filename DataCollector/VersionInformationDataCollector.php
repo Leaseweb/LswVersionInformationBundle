@@ -65,7 +65,7 @@ class VersionInformationDataCollector extends DataCollector
         }
         $this->data->information = json_decode($output);
 
-        $process = new Process('git log -1 '.$rootDir);
+        $process = new Process('git --no-pager log -1 '.$rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
@@ -73,26 +73,47 @@ class VersionInformationDataCollector extends DataCollector
         }
         $this->data->informationText = $output;
 
-        $process = new Process('git status --porcelain '.$rootDir);
-        $process->run();
-        $output = trim($process->getOutput());
-        if (!$process->isSuccessful()) {
-            throw new \Exception($process->getErrorOutput());
-        }
-        if ($output) {
-             $this->data->status = explode("\n", $output);
-        } else {
-            $this->data->status = array();
-        }
-
-
-        $process = new Process('git status --porcelain '.$rootDir);
+        $process = new Process('git --no-pager status --porcelain '.$rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
             throw new \Exception($process->getErrorOutput());
         }
+        $this->data->status = $output?explode("\n", trim($output)):array();
         $this->data->statusText = $output;
+
+        $process = new Process('git --no-pager log --pretty=format: origin..HEAD --name-status '.$rootDir);
+        $process->run();
+        $output = trim($process->getOutput());
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+        $this->data->ahead = $output?explode("\n", trim($output)):array();
+
+        $process = new Process('git --no-pager log origin..HEAD --name-status '.$rootDir);
+        $process->run();
+        $output = trim($process->getOutput());
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+        $this->data->aheadText = $output;
+
+        $process = new Process('git --no-pager log --pretty=format: HEAD..origin --name-status '.$rootDir);
+        $process->run();
+        $output = $process->getOutput();
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+        $this->data->behind = $output?explode("\n", trim($output)):array();
+
+        $process = new Process('git --no-pager log HEAD..origin --name-status '.$rootDir);
+        $process->run();
+        $output = $process->getOutput();
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+        $this->data->behindText = $output;
+
     }
 
     private function collectSvn($rootDir, Request $request, Response $response, \Exception $exception = null)
@@ -202,6 +223,34 @@ class VersionInformationDataCollector extends DataCollector
     }
 
     /**
+     * Get the number of commits ahead from git log
+     *
+     * @return number
+     */
+    public function getAheadCount()
+    {
+        if ($this->data->mode == self::GIT) {
+            return count($this->data->ahead);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Get the number of commits behind from git log
+     *
+     * @return number
+     */
+    public function getBehindCount()
+    {
+        if ($this->data->mode == self::GIT) {
+            return count($this->data->behind);
+        }
+
+        return 0;
+    }
+
+    /**
      * Get the svn info output
      *
      * @return string
@@ -221,6 +270,26 @@ class VersionInformationDataCollector extends DataCollector
         return $this->data->statusText;
     }
 
+
+    /**
+     * Get the git log ahead output
+     *
+     * @return string
+     */
+    public function getAheadText()
+    {
+        return $this->data->aheadText;
+    }
+
+    /**
+     * Get the git log behind output
+     *
+     * @return string
+     */
+    public function getBehindText()
+    {
+        return $this->data->behindText;
+    }
     /**
      * {@inheritdoc}
      */
