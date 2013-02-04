@@ -197,7 +197,7 @@ class VersionInformationDataCollector extends DataCollector
     public function getBranch()
     {
         if ($this->data->mode == self::SVN) {
-            return str_replace($this->data->information->entry->root, '', $this->data->information->entry->url);
+            return str_replace($this->data->information->entry->repository->root, '', $this->data->information->entry->url);
         } elseif ($this->data->mode == self::GIT) {
             return $this->data->information->branch;
         }
