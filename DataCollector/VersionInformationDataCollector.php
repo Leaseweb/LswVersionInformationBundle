@@ -86,7 +86,7 @@ class VersionInformationDataCollector extends DataCollector
         }
 
 
-        $process = new Process('git status '.$rootDir);
+        $process = new Process('git status --porcelain '.$rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
