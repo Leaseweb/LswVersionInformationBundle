@@ -57,7 +57,7 @@ class VersionInformationDataCollector extends DataCollector
 
     private function collectGit($rootDir, Request $request, Response $response, \Exception $exception = null)
     {
-        $process = new Process('git --no-pager log -1 --pretty=\'{"hash":"%h","date":"%ai","name":"%an"}\' '.$rootDir);
+        $process = new Process('git --no-pager log -1 --pretty=\'{"hash":"%h","date":"%ai","name":"%an","branch":"%d"}\' '.$rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
@@ -65,7 +65,7 @@ class VersionInformationDataCollector extends DataCollector
         }
         $this->data->information = json_decode($output);
 
-        $process = new Process('git --no-pager log -1 '.$rootDir);
+        $process = new Process('git --no-pager log -1 --decorate '.$rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
@@ -186,6 +186,20 @@ class VersionInformationDataCollector extends DataCollector
             return $this->data->information->entry->commit->author;
         } elseif ($this->data->mode == self::GIT) {
             return $this->data->information->name;
+        }
+    }
+
+    /**
+     * Get the branche from svn info
+     *
+     * @return string
+     */
+    public function getBranch()
+    {
+        if ($this->data->mode == self::SVN) {
+            return str_replace($this->data->information->entry->root, '', $this->data->information->entry->url);
+        } elseif ($this->data->mode == self::GIT) {
+            return $this->data->information->branch;
         }
     }
 
