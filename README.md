@@ -40,4 +40,4 @@ Finally, add the bundle to the registerBundles function of the AppKernel class i
         );
 
 
-Now the Subversion information should show up with a little 'svn' (or 'Git') icon in your debug toolbar.
+Now the Subversion (or Git) information should show up with a little 'svn' (or 'Git') icon in your debug toolbar.
