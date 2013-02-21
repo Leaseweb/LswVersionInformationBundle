@@ -32,8 +32,7 @@ class VersionInformationDataCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    public function collect(Request $request, Response $response,
-            \Exception $exception = null)
+    public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         if (isset($this->data)) {
             return;
@@ -57,6 +56,18 @@ class VersionInformationDataCollector extends DataCollector
 
     private function collectGit($rootDir, Request $request, Response $response, \Exception $exception = null)
     {
+        $process = new Process('cd '.$rootDir.'; git --no-pager show-ref --dereference');
+        $process->run();
+        $output = $process->getOutput();
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+        $refs = explode("\n",trim($output));
+        $head = substr($refs[0],41);
+        $remote = substr($refs[1],41);
+        $ahead = "$head..$remote";
+        $behind = "$remote..$head";
+
         $process = new Process('git --no-pager log -1 --pretty=\'{"hash":"%h","date":"%ai","name":"%an","branch":"%d"}\' ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
@@ -64,12 +75,6 @@ class VersionInformationDataCollector extends DataCollector
             throw new \Exception($process->getErrorOutput());
         }
         $this->data->information = json_decode($output);
-
-        $branch = explode(', ', trim($this->data->information->branch, ' ()'));
-        $branch1 = array_shift($branch);
-        $branch2 = array_shift($branch);
-        $ahead = "$branch1..$branch2";
-        $behind = "$branch2..$branch1";
 
         $process = new Process('git --no-pager log -1 --decorate ' . $rootDir);
         $process->run();
@@ -131,8 +136,7 @@ class VersionInformationDataCollector extends DataCollector
         if (!$process->isSuccessful()) {
             throw new \Exception($process->getErrorOutput());
         }
-        $this->data->information = json_decode(
-                json_encode(simplexml_load_string($output)));
+        $this->data->information = json_decode(json_encode(simplexml_load_string($output)));
 
         $process = new Process('svn info ' . $rootDir);
         $process->run();
@@ -148,8 +152,7 @@ class VersionInformationDataCollector extends DataCollector
         if (!$process->isSuccessful()) {
             throw new \Exception($process->getErrorOutput());
         }
-        $this->data->status = json_decode(
-                json_encode(simplexml_load_string($output)));
+        $this->data->status = json_decode(json_encode(simplexml_load_string($output)));
 
         $process = new Process('svn status ' . $rootDir);
         $process->run();
