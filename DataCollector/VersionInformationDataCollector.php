@@ -1,6 +1,5 @@
 <?php
 namespace Lsw\VersionInformationBundle\DataCollector;
-
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +32,8 @@ class VersionInformationDataCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response,
+            \Exception $exception = null)
     {
         if (isset($this->data)) {
             return;
@@ -41,12 +41,12 @@ class VersionInformationDataCollector extends DataCollector
 
         $this->data = (object) array();
         $dumper = new \Symfony\Component\Yaml\Dumper();
-        $rootDir = realpath($this->kernel->getRootDir().'/../');
+        $rootDir = realpath($this->kernel->getRootDir() . '/../');
 
-        if (file_exists($rootDir.'/.svn/')) {
+        if (file_exists($rootDir . '/.svn/')) {
             $this->data->mode = self::SVN;
             $this->collectSvn($rootDir, $request, $response, $exception);
-        } elseif (file_exists($rootDir.'/.git/')) {
+        } elseif (file_exists($rootDir . '/.git/')) {
             $this->data->mode = self::GIT;
             $this->collectGit($rootDir, $request, $response, $exception);
         } else {
@@ -57,7 +57,7 @@ class VersionInformationDataCollector extends DataCollector
 
     private function collectGit($rootDir, Request $request, Response $response, \Exception $exception = null)
     {
-        $process = new Process('git --no-pager log -1 --pretty=\'{"hash":"%h","date":"%ai","name":"%an","branch":"%d"}\' '.$rootDir);
+        $process = new Process('git --no-pager log -1 --pretty=\'{"hash":"%h","date":"%ai","name":"%an","branch":"%d"}\' ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
@@ -65,7 +65,13 @@ class VersionInformationDataCollector extends DataCollector
         }
         $this->data->information = json_decode($output);
 
-        $process = new Process('git --no-pager log -1 --decorate '.$rootDir);
+        $branch = explode(', ', trim($this->data->information->branch, ' ()'));
+        $branch1 = array_shift($branch);
+        $branch2 = array_shift($branch);
+        $ahead = "$branch1..$branch2";
+        $behind = "$branch2..$branch1";
+
+        $process = new Process('git --no-pager log -1 --decorate ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
@@ -73,24 +79,24 @@ class VersionInformationDataCollector extends DataCollector
         }
         $this->data->informationText = $output;
 
-        $process = new Process('git --no-pager status --porcelain '.$rootDir);
+        $process = new Process('git --no-pager status --porcelain ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
             throw new \Exception($process->getErrorOutput());
         }
-        $this->data->status = $output?explode("\n", trim($output)):array();
+        $this->data->status = $output ? explode("\n", trim($output)) : array();
         $this->data->statusText = $output;
 
-        $process = new Process('git --no-pager log --pretty=format: origin..HEAD --name-status '.$rootDir);
+        $process = new Process('git --no-pager log --pretty=format: '.$ahead.' --name-status ' . $rootDir);
         $process->run();
         $output = trim($process->getOutput());
         if (!$process->isSuccessful()) {
             throw new \Exception($process->getErrorOutput());
         }
-        $this->data->ahead = $output?explode("\n", trim($output)):array();
+        $this->data->ahead = $output ? explode("\n", trim($output)) : array();
 
-        $process = new Process('git --no-pager log origin..HEAD --name-status '.$rootDir);
+        $process = new Process('git --no-pager log '.$ahead.' --name-status ' . $rootDir);
         $process->run();
         $output = trim($process->getOutput());
         if (!$process->isSuccessful()) {
@@ -98,15 +104,15 @@ class VersionInformationDataCollector extends DataCollector
         }
         $this->data->aheadText = $output;
 
-        $process = new Process('git --no-pager log --pretty=format: HEAD..origin --name-status '.$rootDir);
+        $process = new Process('git --no-pager log --pretty=format: '.$behind.' --name-status ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
             throw new \Exception($process->getErrorOutput());
         }
-        $this->data->behind = $output?explode("\n", trim($output)):array();
+        $this->data->behind = $output ? explode("\n", trim($output)) : array();
 
-        $process = new Process('git --no-pager log HEAD..origin --name-status '.$rootDir);
+        $process = new Process('git --no-pager log '.$behind.' --name-status ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
@@ -116,17 +122,19 @@ class VersionInformationDataCollector extends DataCollector
 
     }
 
-    private function collectSvn($rootDir, Request $request, Response $response, \Exception $exception = null)
+    private function collectSvn($rootDir, Request $request, Response $response,
+            \Exception $exception = null)
     {
-        $process = new Process('svn info --xml '.$rootDir);
+        $process = new Process('svn info --xml ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
             throw new \Exception($process->getErrorOutput());
         }
-        $this->data->information = json_decode(json_encode(simplexml_load_string($output)));
+        $this->data->information = json_decode(
+                json_encode(simplexml_load_string($output)));
 
-        $process = new Process('svn info '.$rootDir);
+        $process = new Process('svn info ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
@@ -134,15 +142,16 @@ class VersionInformationDataCollector extends DataCollector
         }
         $this->data->informationText = $output;
 
-        $process = new Process('svn status --xml '.$rootDir);
+        $process = new Process('svn status --xml ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
             throw new \Exception($process->getErrorOutput());
         }
-        $this->data->status = json_decode(json_encode(simplexml_load_string($output)));
+        $this->data->status = json_decode(
+                json_encode(simplexml_load_string($output)));
 
-        $process = new Process('svn status '.$rootDir);
+        $process = new Process('svn status ' . $rootDir);
         $process->run();
         $output = $process->getOutput();
         if (!$process->isSuccessful()) {
@@ -169,7 +178,8 @@ class VersionInformationDataCollector extends DataCollector
     public function getRevision()
     {
         if ($this->data->mode == self::SVN) {
-            return $this->data->information->entry->commit->{'@attributes'}->revision;
+            return $this->data->information->entry->commit->{'@attributes'}
+                    ->revision;
         } elseif ($this->data->mode == self::GIT) {
             return $this->data->information->hash;
         }
@@ -197,7 +207,9 @@ class VersionInformationDataCollector extends DataCollector
     public function getBranch()
     {
         if ($this->data->mode == self::SVN) {
-            return str_replace($this->data->information->entry->repository->root, '', $this->data->information->entry->url);
+            return str_replace(
+                    $this->data->information->entry->repository->root, '',
+                    $this->data->information->entry->url);
         } elseif ($this->data->mode == self::GIT) {
             return $this->data->information->branch;
         }
@@ -283,7 +295,6 @@ class VersionInformationDataCollector extends DataCollector
     {
         return $this->data->statusText;
     }
-
 
     /**
      * Get the git log ahead output
