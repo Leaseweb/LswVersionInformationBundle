@@ -1,13 +1,13 @@
 LswVersionInformationBundle
 ===========================
 
-![screenshot](http://www.leaseweblabs.com/wp-content/uploads/2013/02/git_info.png)
+[screenshot](http://www.leaseweblabs.com/wp-content/uploads/2013/02/git_info.png)
 
 Picture 1: Git information in the Symfony2 web debug toolbar
 
-![screenshot](http://www.leaseweblabs.com/wp-content/uploads/2013/02/svn_info.png)
+[screenshot](http://www.leaseweblabs.com/wp-content/uploads/2013/02/svn_info.png)
 
-Picture 3: Subversion information in the Symfony2 web debug toolbar
+Picture 2: Subversion information in the Symfony2 web debug toolbar
 
 How do the testers know what revision of our application they are testing and what branch or 
 tag they are testing? This is especially a problem with acceptance testing where interactions
