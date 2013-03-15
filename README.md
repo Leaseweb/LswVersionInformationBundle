@@ -1,13 +1,25 @@
 LswVersionInformationBundle
 ===========================
 
+![screenshot](http://www.leaseweblabs.com/wp-content/uploads/2013/02/git_info.png)
+Picture 1: Git information in the Symfony2 web debug toolbar
+
+![screenshot](http://www.leaseweblabs.com/wp-content/uploads/2013/02/git_pane.png)
+Picture 2: This information is shown when you click the Git icon in the toolbar
+
+![screenshot](http://www.leaseweblabs.com/wp-content/uploads/2013/02/svn_info.png)
+Picture 3: Subversion information in the Symfony2 web debug toolbar
+
+![screenshot](http://www.leaseweblabs.com/wp-content/uploads/2013/02/svn_pane.png)
+Picture 4: This information is shown when you click the SVN icon in the toolbar
+
 How do the testers know what revision of our application they are testing and what branch or 
 tag they are testing? This is especially a problem with acceptance testing where interactions
 between various systems are tested. Because the testers do not have command line access on
 the Linux machines that run the acceptance environment they cannot simply issue the "svn info"
 and "svn status" (or "git log -1" and "git status") commands like developers can.
 
-Screenshots: http://www.leaseweblabs.com/2013/02/git-version-information-in-symfony2-wdt/
+[Read the LeaseWebLabs blog about LswVersionInformationBundle](http://www.leaseweblabs.com/2013/02/git-version-information-in-symfony2-wdt/)
 
 To solve this problem we wrote a Symfony bundle called LswVersionInformationBundle. It shows
 the output of the "svn info" and "svn status" (or "git log -1" and "git status") commands in a
