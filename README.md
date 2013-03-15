@@ -18,7 +18,7 @@ the output of the "svn info" and "svn status" (or "git log -1" and "git status")
 tab in the Symfony2 debug toolbar. This bundle is actually a rewrite of the Symfony1 
 "lwTestingInformationPlugin" we wrote a year ago that can be found on the link below.
 
-Symfony1 version: http://www.leaseweblabs.com/2011/12/subversion-revision-information-in-the-symfony-debug-toolbar/
+[Read the LeaseWebLabs blog about the Symfony1 version](http://www.leaseweblabs.com/2011/12/subversion-revision-information-in-the-symfony-debug-toolbar/)
 
 ### Installation
 
