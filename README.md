@@ -47,3 +47,13 @@ Finally, add the bundle to the registerBundles function of the AppKernel class i
 
 
 Now the Subversion (or Git) information should show up with a little 'svn' (or 'Git') icon in your debug toolbar.
+
+### Configuration
+If you are using a custom folder structure in your Symfony2 application you have to modify your `root_dir` parameter. Otherwise `collector` won't be able to locate your vcs folder.
+
+In your `config.yml` (if you have enabled the bundle only for dev environment use `config_dev.yml` instead)
+```
+# LSW Version Information configuration
+lsw_version_information:
+    root_dir: path/to/your/root
+```
