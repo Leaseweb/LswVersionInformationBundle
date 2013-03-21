@@ -100,6 +100,7 @@ class VersionInformationDataCollector extends DataCollector
             throw new \Exception($process->getErrorOutput());
         }
         $this->data->ahead = $output ? explode("\n", trim($output)) : array();
+        $this->data->ahead = array_filter($this->data->ahead);
 
         $process = new Process('git --no-pager log '.$ahead.' --name-status ' . $rootDir);
         $process->run();
@@ -116,6 +117,7 @@ class VersionInformationDataCollector extends DataCollector
             throw new \Exception($process->getErrorOutput());
         }
         $this->data->behind = $output ? explode("\n", trim($output)) : array();
+        $this->data->behind = array_filter($this->data->behind);
 
         $process = new Process('git --no-pager log '.$behind.' --name-status ' . $rootDir);
         $process->run();
