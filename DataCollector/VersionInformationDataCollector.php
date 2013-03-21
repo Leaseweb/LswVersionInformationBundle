@@ -40,7 +40,8 @@ class VersionInformationDataCollector extends DataCollector
 
         $this->data = (object) array();
         $dumper = new \Symfony\Component\Yaml\Dumper();
-        $rootDir = realpath($this->kernel->getRootDir() . '/../');
+        $container = $this->kernel->getContainer();
+        $rootDir = realpath($container->getParameter('root_dir') ?: $this->kernel->getRootDir() . '/../');
 
         if (file_exists($rootDir . '/.svn/')) {
             $this->data->mode = self::SVN;
