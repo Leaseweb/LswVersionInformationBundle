@@ -1,7 +1,7 @@
 {
     "name": "leaseweb/version-information-bundle",
     "type": "symfony-bundle",
-    "description": "LeaseWeb LswVersionInformationBundle",
+    "description": "Adds output of SVN and Git 'status' commands to the Web Debug Toolbar",
     "keywords": ["subversion","version","svn"],
     "homepage": "http://www.leaseweblabs.com",
     "license": "MIT",
