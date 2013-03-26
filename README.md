@@ -47,7 +47,7 @@ public function registerBundles()
 
     if (in_array($this->getEnvironment(), array('dev', 'test'))) {
         ...
-        $bundles[] = new Lsw\VersionInformationBundle\LswVersionInformationBundle(),
+        $bundles[] = new Lsw\VersionInformationBundle\LswVersionInformationBundle();
     }
 
 }
