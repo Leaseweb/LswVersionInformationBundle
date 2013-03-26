@@ -37,14 +37,21 @@ The next thing you should do is install the bundle by executing the following co
 
 Finally, add the bundle to the registerBundles function of the AppKernel class in the 'app/AppKernel.php' file:
 
-    public function registerBundles()
-    {
-        $bundles = array(
-            // ...
-            new Lsw\VersionInformationBundle\LswVersionInformationBundle(),
-            // ...
-        );
+``` php
+<?php
+// app/AppKernel.php
 
+public function registerBundles()
+{
+    ...
+
+    if (in_array($this->getEnvironment(), array('dev', 'test'))) {
+        ...
+        $bundles[] = new Lsw\VersionInformationBundle\LswVersionInformationBundle(),
+    }
+
+}
+```
 
 Now the Subversion (or Git) information should show up with a little 'svn' (or 'Git') icon in your debug toolbar.
 
