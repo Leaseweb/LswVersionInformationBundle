@@ -26,7 +26,7 @@ To install LswVersionInformationBundle with Composer just add the following to y
 
     {
         require: {
-            "leaseweb/version-information-bundle": "1.0.*@dev"
+            "leaseweb/version-information-bundle": "*",
             ...
         }
     }
