@@ -65,7 +65,12 @@ class VersionInformationDataCollector extends DataCollector
         }
         $refs = explode("\n",trim($output));
         $head = substr($refs[0],41);
-        $remote = substr($refs[1],41);
+        foreach ($refs as $ref) {
+            $remote = substr($ref,41);
+            if (stripos($remote,'origin')!==false && stripos($remote,'master')!==false) {
+                break;
+            }
+        }
         $ahead = "$head..$remote";
         $behind = "$remote..$head";
 
