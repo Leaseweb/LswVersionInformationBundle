@@ -63,8 +63,22 @@ class VersionInformationDataCollector extends DataCollector
         if (!$process->isSuccessful()) {
             throw new \Exception($process->getErrorOutput());
         }
+
+        $process = new Process('git rev-parse --abbrev-ref HEAD');
+        $process->run();
+        $currentBranch = trim($process->getOutput());
+        if (!$process->isSuccessful()) {
+            throw new \Exception($process->getErrorOutput());
+        }
+
         $refs = explode("\n",trim($output));
         $head = substr($refs[0],41);
+        foreach ($refs as $ref) {
+            if (strstr($ref, $currentBranch)) {
+                $head = substr($ref,41);
+                break;
+            }
+        }
         foreach ($refs as $ref) {
             $remote = substr($ref,41);
             if (stripos($remote,'origin')!==false && stripos($remote,'master')!==false) {
