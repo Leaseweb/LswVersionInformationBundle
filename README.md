@@ -64,3 +64,17 @@ In your `config.yml` (if you have enabled the bundle only for dev environment us
 lsw_version_information:
     root_dir: path/to/your/root
 ```
+
+
+All options available with default values:
+
+```
+# LSW Version Information configuration
+lsw_version_information:
+    root_dir: %kernel.root_dir%/../
+    settings:
+        show_icon: true
+        show_current_branch: true
+        show_latest_revision: false
+        show_dirty_files: true
+```

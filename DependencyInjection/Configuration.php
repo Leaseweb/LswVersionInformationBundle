@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('show_icon')->defaultValue(true)->end()
                     ->scalarNode('show_current_branch')->defaultValue(true)->end()
                     ->scalarNode('show_latest_revision')->defaultValue(false)->end()
-                    ->scalarNode('show_dirty_files')->defaultValue(false)->end()
+                    ->scalarNode('show_dirty_files')->defaultValue(true)->end()
                 ->end()
             ->end();
 

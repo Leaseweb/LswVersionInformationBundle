@@ -20,11 +20,6 @@ class VersionInformationDataCollector extends DataCollector
     const MODE_SVN = 'svn';
     const MODE_GIT = 'git';
     /**
-     * @var RevisionInformationFetcherInterface
-     */
-    protected $data;
-
-    /**
      * @var string
      */
     private $rootDir;
