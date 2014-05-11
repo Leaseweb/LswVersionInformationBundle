@@ -1,14 +1,12 @@
 <?php
 namespace Lsw\VersionInformationBundle\DataCollector;
 
-use Lsw\VersionInformationBundle\RevisionInformation\Software\Git\GitRevisionInformationCollector;
 use Lsw\VersionInformationBundle\RevisionInformation\RevisionInformationFetcherInterface;
+use Lsw\VersionInformationBundle\RevisionInformation\Software\Git\GitRevisionInformationCollector;
 use Lsw\VersionInformationBundle\RevisionInformation\Software\Svn\SvnRevisionInformationCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Yaml\Dumper;
 
 /**
  * VersionInformationDataCollector
@@ -56,7 +54,6 @@ class VersionInformationDataCollector extends DataCollector
         }
 
         $this->data = (object) array();
-        $dumper = new Dumper();
         $rootDir = realpath($this->rootDir ? : $this->appRootDir . '/../');
 
         $this->data->settings = $this->settings;
