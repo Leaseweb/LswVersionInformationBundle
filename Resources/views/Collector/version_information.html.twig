@@ -8,6 +8,7 @@
     {% if collector.settings.show_current_branch or collector.settings.show_latest_revision %}
         <span class="sf-toolbar-info-piece-additional">
         {% if collector.settings.show_current_branch %}{{ collector.fetcher.currentBranch }}{% endif %}
+        {% if collector.fetcher.currentBranch is not empty and collector.settings.show_latest_revision %},{% endif %}
         {% if collector.settings.show_latest_revision %}{{ collector.fetcher.revision }}{% endif %}
         </span>
     {% endif %}
