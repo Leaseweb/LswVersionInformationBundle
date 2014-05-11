@@ -52,7 +52,7 @@ class VersionInformationDataCollector extends DataCollector
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         if (isset($this->data)) {
-//            return;
+            return;
         }
 
         $this->data = (object) array();
