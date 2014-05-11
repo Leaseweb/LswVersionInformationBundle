@@ -1,6 +1,7 @@
 <?php
 namespace Lsw\VersionInformationBundle\DataCollector;
 
+use Lsw\VersionInformationBundle\RevisionInformation\RevisionInformationCollectorInterface;
 use Lsw\VersionInformationBundle\RevisionInformation\RevisionInformationFetcherInterface;
 use Lsw\VersionInformationBundle\RevisionInformation\Software\Git\GitRevisionInformationCollector;
 use Lsw\VersionInformationBundle\RevisionInformation\Software\Svn\SvnRevisionInformationCollector;
@@ -15,8 +16,6 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector;
  */
 class VersionInformationDataCollector extends DataCollector
 {
-    const MODE_SVN = 'svn';
-    const MODE_GIT = 'git';
     /**
      * @var string
      */
@@ -33,15 +32,22 @@ class VersionInformationDataCollector extends DataCollector
     private $settings;
 
     /**
-     * @param string $rootDir
-     * @param string $appRootDir
-     * @param array  $settings
+     * @var RevisionInformationCollectorInterface[]
      */
-    public function __construct($rootDir, $appRootDir, array $settings)
+    private $collectors;
+
+    /**
+     * @param string                                  $rootDir
+     * @param string                                  $appRootDir
+     * @param array                                   $settings
+     * @param RevisionInformationCollectorInterface[] $collectors
+     */
+    public function __construct($rootDir, $appRootDir, array $settings, array $collectors)
     {
         $this->rootDir = $rootDir;
         $this->appRootDir = $appRootDir;
         $this->settings = $settings;
+        $this->collectors = $collectors;
     }
 
     /**
@@ -57,15 +63,51 @@ class VersionInformationDataCollector extends DataCollector
         $rootDir = realpath($this->rootDir ? : $this->appRootDir . '/../');
 
         $this->data->settings = $this->settings;
-        if (file_exists($rootDir . '/.svn/')) {
-            $collector = new SvnRevisionInformationCollector();
-        } elseif (file_exists($rootDir . '/.git/')) {
-            $collector = new GitRevisionInformationCollector();
-        } else {
-            throw new \Exception('Could not find Subversion or Git.');
+
+        if (!isset($this->collectors['svn'])) {
+            $this->collectors['svn'] = new SvnRevisionInformationCollector();
+        }
+        if (!isset($this->collectors['git'])) {
+            $this->collectors['git'] = new GitRevisionInformationCollector();
         }
 
-        $this->data->fetcher = $collector->collect($rootDir, $request, $response, $exception);
+        foreach ($this->collectors as $name => $collector) {
+            if (is_array($collector) && isset($collector['class'])) {
+                $class = $collector['class'];
+                $collector = new $class();
+            }
+
+            if (!($collector instanceof RevisionInformationCollectorInterface)) {
+                throw new \Exception(
+                    sprintf(
+                        'Class %s must implement the interface
+                        Lsw\VersionInformationBundle\RevisionInformation\RevisionInformationCollectorInterface',
+                        get_class($collector)
+                    )
+                );
+            }
+
+            if ($collector->isValidRepository($rootDir)) {
+                $fetcher = $collector->collect($rootDir, $request, $response, $exception);
+                if ($fetcher !== null) {
+                    if (!($fetcher instanceof RevisionInformationFetcherInterface)) {
+                        throw new \RuntimeException(
+                            sprintf(
+                                'Class %s must return an implementation of
+                                Lsw\VersionInformationBundle\RevisionInformation\RevisionInformationFetcherInterface',
+                                get_class($collector)
+                            )
+                        );
+                    }
+
+                    $this->data->fetcher = $fetcher;
+
+                    return;
+                }
+            }
+        }
+
+        throw new \RuntimeException('Could not find a valid repository collector.');
     }
 
     /**

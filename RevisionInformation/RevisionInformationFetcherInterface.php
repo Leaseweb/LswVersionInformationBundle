@@ -7,7 +7,7 @@ interface RevisionInformationFetcherInterface
     /**
      * @return string
      */
-    public function getMode();
+    public function getName();
 
     /**
      * @return string

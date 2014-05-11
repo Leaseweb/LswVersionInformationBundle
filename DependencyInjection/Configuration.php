@@ -33,6 +33,18 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('show_latest_revision')->defaultValue(false)->end()
                     ->scalarNode('show_dirty_files')->defaultValue(true)->end()
                 ->end()
+            ->end()
+            ->arrayNode('collectors')
+                ->useAttributeAsKey('name')
+                ->prototype('array')
+                    ->beforeNormalization()
+                    ->ifString()
+                        ->then(function($value) { return array('class' => $value); })
+                    ->end()
+                    ->children()
+                        ->scalarNode('class')->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

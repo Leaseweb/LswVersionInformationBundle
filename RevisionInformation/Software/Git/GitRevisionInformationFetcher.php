@@ -10,9 +10,9 @@ class GitRevisionInformationFetcher extends AbstractRevisionInformationFetcher
     /**
      * @return string
      */
-    public function getMode()
+    public function getName()
     {
-        return VersionInformationDataCollector::MODE_GIT;
+        return 'git';
     }
 
     /**

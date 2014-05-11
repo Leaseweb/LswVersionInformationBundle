@@ -5,6 +5,10 @@ parameters:
 services:
     data_collector.version_information:
         class: %data_collector.version_information.class%
-        arguments: [%lsw_version_information_root_dir%, %kernel.root_dir%, %lsw_version_information_settings%]
+        arguments:
+            - %lsw_version_information_root_dir%
+            - %kernel.root_dir%
+            - %lsw_version_information_settings%
+            - %lsw_version_information_collectors%
         tags:
             - { name: data_collector, template: %data_collector.version_information.template%, id:"version_information"}

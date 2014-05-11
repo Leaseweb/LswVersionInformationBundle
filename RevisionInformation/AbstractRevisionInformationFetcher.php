@@ -25,7 +25,7 @@ abstract class AbstractRevisionInformationFetcher implements RevisionInformation
      */
     public function getViewName()
     {
-        return ucfirst($this->getMode());
+        return ucfirst($this->getName());
     }
 
     public function getAheadCount()

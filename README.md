@@ -56,7 +56,8 @@ public function registerBundles()
 Now the Subversion (or Git) information should show up with a little 'svn' (or 'Git') icon in your debug toolbar.
 
 ### Configuration
-If you are using a custom folder structure in your Symfony2 application you have to modify your `root_dir` parameter. Otherwise `collector` won't be able to locate your vcs folder.
+If you are using a custom folder structure in your Symfony2 application you have to modify your `root_dir` parameter.
+Otherwise `collector` won't be able to locate your vcs folder.
 
 In your `config.yml` (if you have enabled the bundle only for dev environment use `config_dev.yml` instead)
 ```
@@ -77,4 +78,13 @@ lsw_version_information:
         show_current_branch: true
         show_latest_revision: false
         show_dirty_files: true
+    collectors:
+        hg: Lsw\VersionInformationBundle\DataCollector\HgRevisionInformationCollector
+        git: Acme\DemoBundle\DataCollector\MyOwnGitCollectorImplementation # This is how to override the default git implementation
 ```
+
+### Registering additional collectors
+Additional collectors can be registered through the `collectors` configuration (see above).
+A collector must implement the class `Lsw\VersionInformationBundle\RevisionInformation\RevisionInformationCollectorInterface`.
+
+Equally, you can override the default `git` and `svn` collectors by specifying the collector key as `git` or `svn` respectively.

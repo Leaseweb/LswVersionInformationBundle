@@ -2,7 +2,6 @@
 
 namespace Lsw\VersionInformationBundle\RevisionInformation\Software\Svn;
 
-use Lsw\VersionInformationBundle\DataCollector\VersionInformationDataCollector;
 use Lsw\VersionInformationBundle\RevisionInformation\AbstractRevisionInformationFetcher;
 
 class SvnRevisionInformationFetcher extends AbstractRevisionInformationFetcher
@@ -10,14 +9,14 @@ class SvnRevisionInformationFetcher extends AbstractRevisionInformationFetcher
     /**
      * @return string
      */
-    public function getMode()
+    public function getName()
     {
-        return VersionInformationDataCollector::MODE_GIT;
+        return 'svn';
     }
 
     public function getViewName()
     {
-        return $this->getMode();
+        return $this->getName();
     }
 
     /**
