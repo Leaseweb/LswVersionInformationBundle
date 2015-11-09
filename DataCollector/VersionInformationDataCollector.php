@@ -46,7 +46,7 @@ class VersionInformationDataCollector extends DataCollector
         if (file_exists($rootDir . '/.svn/')) {
             $this->data->mode = self::SVN;
             $this->collectSvn($rootDir, $request, $response, $exception);
-        } elseif (file_exists($rootDir . '/.git/')) {
+        } elseif (file_exists($rootDir . '/.git')) {
             $this->data->mode = self::GIT;
             $this->collectGit($rootDir, $request, $response, $exception);
         } else {
