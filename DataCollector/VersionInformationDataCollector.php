@@ -55,7 +55,7 @@ class VersionInformationDataCollector extends DataCollector
      */
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
-        if (isset($this->data)) {
+        if (isset($this->data) && is_array($this->data) && count($this->data) > 0) {
             return;
         }
 
