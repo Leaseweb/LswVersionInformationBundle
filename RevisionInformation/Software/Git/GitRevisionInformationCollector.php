@@ -64,7 +64,7 @@ class GitRevisionInformationCollector implements RevisionInformationCollectorInt
      */
     public function isValidRepository($dir)
     {
-        return file_exists($dir . '/.git/');
+        return file_exists($dir . '/.git');
     }
 
     private function execute($command, $addRootDir = true)
