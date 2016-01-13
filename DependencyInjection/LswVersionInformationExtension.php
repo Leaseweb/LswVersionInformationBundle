@@ -20,7 +20,9 @@ class LswVersionInformationExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('root_dir', $config['root_dir']);
+        $container->setParameter('lsw_version_information_root_dir', $config['root_dir']);
+        $container->setParameter('lsw_version_information_settings', $config['settings']);
+        $container->setParameter('lsw_version_information_collectors', $config['collectors']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

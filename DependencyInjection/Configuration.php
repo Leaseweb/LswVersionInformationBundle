@@ -26,6 +26,25 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->scalarNode('root_dir')->defaultValue(false)->end()
+            ->arrayNode('settings')->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('show_icon')->defaultValue(true)->end()
+                    ->scalarNode('show_current_branch')->defaultValue(true)->end()
+                    ->scalarNode('show_latest_revision')->defaultValue(false)->end()
+                    ->scalarNode('show_dirty_files')->defaultValue(true)->end()
+                ->end()
+            ->end()
+            ->arrayNode('collectors')
+                ->useAttributeAsKey('name')
+                ->prototype('array')
+                    ->beforeNormalization()
+                    ->ifString()
+                        ->then(function($value) { return array('class' => $value); })
+                    ->end()
+                    ->children()
+                        ->scalarNode('class')->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

@@ -2,56 +2,61 @@
 
 {% block toolbar %}
     {% set icon %}
-        {% if collector.mode == 'svn' %}
-          <img width="20" height="28" alt="svn" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB90BBxUdJ4JIDLQAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABAUlEQVRIx+2ToY6DQBRFz24a0g/A8i1tDaKgUJOmIfixKDxNKvoFSMSoSUbUNhmNBz5gVFPTpA7DqsV0JWZ3OeqKd0+eubDw9/nYbDbjnMLPuT9chDMKj8cjxhistVhrCYIArTWe5wHgeR5aa4IgwFpLmqZcr1e01ux2u3fh4XCgqirCMGS73eKco+97oigCII5juq7DOQfA6/UiSRLO5zNSynfh5XJhv9+jtSbLMgCUUgghWK/XCCFQSk1FYwzDMNA0Db7vvwtvtxtSSvI8RwgBQNu2PB4PTqcT9/udruum4jj+vIfVd7DWAvB8PqnrejpQSlGWJUVRLNP7rcKF/8AXC1ZjwNsw7R0AAAAASUVORK5CYII=" />
-        {% else %}
-          <img width="20" height="28" alt="Git" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB90BBxUfMDOt6/EAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAA3ElEQVRIx+2TLQ6EMBSEB7IYJKIhIQhOQlV9D8AhsNiGg7wEiUBgQHEQBCFBcATUroJA+NllgyKMe2nmy0xfCzy6vzTf999XAvWrE94MWFXVOaCmaZBSgohQFAWICEKI6Zxz/hX+mg9SSgghEMcxmqYBYwxBEKAsy/+eDRFBKYW6rncrc85X6ebJFwlt20bbtqtKc8M4j/DDO+z7Ho7jTKYtw6ml5HmOMAzheR4Mw4DrurvGYRhgWdbxUtI0ha7rUEqBMYau6xBF0SYwyzIkSQLTNBdNnr/86NEv+gC9ykorte4x7QAAAABJRU5ErkJggg==" />
-        {% endif %}
-        <span class="sf-toolbar-info-piece-additional">{{ collector.revision }}</span>
-        <span class="sf-toolbar-status sf-toolbar-status-{{ collector.dirtyCount > 0 ? (collector.dirtyCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.dirtyCount }}</span>
-        {% if collector.mode == 'git' %}
-            <span class="sf-toolbar-status sf-toolbar-status-{{ collector.aheadCount > 0 ? (collector.aheadCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.aheadCount }}</span>
-            <span class="sf-toolbar-status sf-toolbar-status-{{ collector.behindCount > 0 ? (collector.behindCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.behindCount }}</span>
-        {% endif %}
+    {% if collector.settings.show_icon %}
+    <img width="20" height="28" alt="{{ collector.fetcher.viewName }}" src="{{ collector.fetcher.icon }}"/>
+    {% endif %}
+    {% if collector.settings.show_current_branch or collector.settings.show_latest_revision %}
+        <span class="sf-toolbar-info-piece-additional">
+        {% if collector.settings.show_current_branch %}{{ collector.fetcher.currentBranch }}{% endif %}
+        {% if collector.fetcher.currentBranch is not empty and collector.settings.show_latest_revision %},{% endif %}
+        {% if collector.settings.show_latest_revision %}{{ collector.fetcher.revision }}{% endif %}
+        </span>
+    {% endif %}
+    {% if collector.settings.show_dirty_files %}
+        {% block dirty_files %}
+            <span class="sf-toolbar-status sf-toolbar-status-{{ collector.fetcher.dirtyFilesColor }}"
+                  title="Dirty files">{{ collector.fetcher.dirtyCount }}</span>
+            {% if collector.fetcher.aheadCount is not sameas(false) %}
+                <span class="sf-toolbar-status sf-toolbar-status-{{ collector.fetcher.aheadColor }}"
+                      title="Commits ahead">{{ collector.fetcher.aheadCount }}</span>
+            {% endif %}
+            {% if collector.fetcher.behindCount is not sameas(false) %}
+                <span class="sf-toolbar-status sf-toolbar-status-{{ collector.fetcher.behindColor }}"
+                        title="Commits behind">{{ collector.fetcher.behindCount}}</span>
+            {% endif %}
+        {% endblock %}
+    {% endif %}
     {% endset %}
     {% set text %}
-        <div class="sf-toolbar-info-piece">
-            <b>Branch</b>
-            <span>{{ collector.branch }}</span>
-        </div>
-        <div class="sf-toolbar-info-piece">
-            <b>Last revision</b>
-            <span>{{ collector.revision }}</span>
-        </div>
-        <div class="sf-toolbar-info-piece">
-            <b>Last author</b>
-            <span>{{ collector.author }}</span>
-        </div>
-        <div class="sf-toolbar-info-piece">
-            <b>Last modified</b>
-            <span>{{ collector.date|date('Y-m-d @ H:i') }}</span>
-        </div>
-        <div class="sf-toolbar-info-piece">
-            <b>Dirty files</b>
-            <span class="sf-toolbar-status sf-toolbar-status-{{ collector.dirtyCount > 0 ? (collector.dirtyCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.dirtyCount }}</span>
-            {% if collector.mode == 'git' %}
-                <span class="sf-toolbar-status sf-toolbar-status-{{ collector.aheadCount > 0 ? (collector.aheadCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.aheadCount }}</span>
-                <span class="sf-toolbar-status sf-toolbar-status-{{ collector.behindCount > 0 ? (collector.behindCount > 5 ? 'red': 'yellow') : 'green' }}">{{ collector.behindCount }}</span>
-            {% endif %}
-        </div>
+    <div class="sf-toolbar-info-piece">
+        <b>Branch</b>
+        <span>{{ collector.fetcher.branchInfo }}</span>
+    </div>
+    <div class="sf-toolbar-info-piece">
+        <b>Last revision</b>
+        <span>{{ collector.fetcher.revision }}</span>
+    </div>
+    <div class="sf-toolbar-info-piece">
+        <b>Last author</b>
+        <span>{{ collector.fetcher.author }}</span>
+    </div>
+    <div class="sf-toolbar-info-piece">
+        <b>Last modified</b>
+        <span>{{ collector.fetcher.date|date('Y-m-d @ H:i') }}</span>
+    </div>
+    <div class="sf-toolbar-info-piece">
+        <b>Dirty files</b>
+        {{ block('dirty_files') }}
+    </div>
     {% endset %}
     {% include 'WebProfilerBundle:Profiler:toolbar_item.html.twig' with { 'link': profiler_url } %}
 {% endblock %}
 
 {% block menu %}
-<span class="label">
+    <span class="label">
     <span class="icon">
       <span style="display:block; float: left; text-transform: none; background-color: #3F3F3F; color: #F7F7F7; font-family: sans-serif; font-size: 15px; padding: 4px 4px 3px 4px; margin: 3px 15px;">
-      {% if collector.mode == 'svn' %}
-        svn
-      {% else %}
-        Git
-      {% endif %}
+      {{ collector.fetcher.viewName }}
       </span>
     </span>
     <strong>VERSION</strong>
@@ -62,24 +67,22 @@
     <h2>Version Information</h2>
 
     <h3>Last commit</h3>
-    <pre>{{ collector.informationText }}</pre>
+    <pre>{{ collector.fetcher.informationText }}</pre>
 
     <br/>
     <h3>Dirty files</h3>
-    {% if collector.statusText|trim %}
-        <pre>{{ collector.statusText }}</pre><br/>
+    {% if collector.fetcher.statusText|trim %}
+        <pre>{{ collector.fetcher.statusText }}</pre><br/>
     {% else %}
         <p><em>No dirty files found</em></p>
     {% endif %}
 
-    {% if collector.mode == 'git' %}
-        {% if collector.aheadText|trim %}
-            <h3>Commits ahead</h3>
-            <pre>{{ collector.aheadText }}</pre><br/>
-        {% endif %}
-        {% if collector.behindText|trim %}
-            <h3>Commits behind</h3>
-            <pre>{{ collector.behindText }}</pre><br/>
-        {% endif %}
+    {% if collector.fetcher.aheadText is not empty %}
+        <h3>Commits ahead</h3>
+        <pre>{{ collector.fetcher.aheadText }}</pre><br/>
+    {% endif %}
+    {% if collector.fetcher.behindText is not empty %}
+        <h3>Commits behind</h3>
+        <pre>{{ collector.fetcher.behindText }}</pre><br/>
     {% endif %}
 {% endblock %}
